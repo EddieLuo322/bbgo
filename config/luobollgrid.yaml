@@ -1,0 +1,58 @@
+---
+#notifications:
+#  slack:
+#    defaultChannel: "dev-bbgo"
+#    errorChannel: "bbgo-error"
+#  switches:
+#    trade: true
+#    orderUpdate: true
+#    submitOrder: true
+
+sessions:
+   binance:
+     exchange: binance
+     envVarPrefix: binance
+
+riskControls:
+  # This is the session-based risk controller, which let you configure different risk controller by session.
+  sessionBased:
+    # "max" is the session name that you want to configure the risk control
+    max:
+      # orderExecutor is one of the risk control
+      orderExecutor:
+        # symbol-routed order executor
+        bySymbol:
+          SOLUSDT:
+            # basic risk control order executor
+            basic:
+              minQuoteBalance: 1000.0
+              maxBaseAssetBalance: 0
+              minBaseAssetBalance: 1.0
+              maxOrderAmount: 3000.0
+
+backtest:
+  # for testing max draw down (MDD) at 03-12
+  # see here for more details
+  # https://www.investopedia.com/terms/m/maximum-drawdown-mdd.asp
+  startTime: "2024-01-01"
+  endTime: "2024-09-01"
+  symbols:
+    - SOLUSDT
+  sessions:
+    - binance
+  account:
+    binance:
+      makerFeeRate: 0.075%
+      takerFeeRate: 0.075%
+      balances:
+        BTC: 0.0
+        USDT: 10000.0
+
+exchangeStrategies:
+  - on: binance
+    luobollgrid:
+      symbol: SOLUSDT
+      interval: 5m
+      gridNumber: 6
+      quantity: 0.01
+      profitSpread: 100.0
