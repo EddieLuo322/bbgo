@@ -14,7 +14,7 @@ import (
 	"github.com/c9s/bbgo/pkg/types"
 )
 
-const ID = "bollgrid"
+const ID = "luobollgrid"
 
 var log = logrus.WithField("strategy", ID)
 
