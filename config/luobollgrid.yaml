@@ -52,7 +52,7 @@ exchangeStrategies:
   - on: binance
     luobollgrid:
       symbol: SOLUSDT
-      interval: 5m
+      interval: 1h
       gridNumber: 6
       quantity: 0.01
-      profitSpread: 100.0
+      profitSpread: 4
