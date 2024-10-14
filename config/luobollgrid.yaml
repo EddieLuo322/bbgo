@@ -54,5 +54,5 @@ exchangeStrategies:
       symbol: SOLUSDT
       interval: 1h
       gridNumber: 6
-      quantity: 0.01
+      quantity: 10
       profitSpread: 4
