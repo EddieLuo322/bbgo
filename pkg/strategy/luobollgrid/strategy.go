@@ -272,7 +272,7 @@ func (s *Strategy) updateOrders(orderExecutor bbgo.OrderExecutor, session *bbgo.
 
 	// skip order updates if up-band - down-band < min profit spread
 	if (s.boll.LastUpBand() - s.boll.LastDownBand()) <= s.ProfitSpread.Float64() {
-		log.Infof("boll: down band price == up band price, skipping...")
+		log.Infof("boll: up-band - down-band < min profit spread, skipping...")
 		return
 	}
 
@@ -338,6 +338,7 @@ func (s *Strategy) Run(ctx context.Context, orderExecutor bbgo.OrderExecutor, se
 	// 如果网格中的一个单子被成交，在原来的位置放一个完全相反的单，保证网格数量不变
 	s.activeOrders = bbgo.NewActiveOrderBook(s.Symbol)
 	s.activeOrders.OnFilled(func(o types.Order) {
+		log.Infof("active order filled: %s", o.String())
 		s.submitReverseOrder(o, session)
 	})
 	s.activeOrders.BindStream(session.UserDataStream)
@@ -345,6 +346,7 @@ func (s *Strategy) Run(ctx context.Context, orderExecutor bbgo.OrderExecutor, se
 	s.profitOrders = bbgo.NewActiveOrderBook(s.Symbol)
 	s.profitOrders.OnFilled(func(o types.Order) {
 		// we made profit here!
+		log.Infof("profit order filled: %s", o.String())
 	})
 	s.profitOrders.BindStream(session.UserDataStream)
 
@@ -391,6 +393,19 @@ func (s *Strategy) Run(ctx context.Context, orderExecutor bbgo.OrderExecutor, se
 			s.updateOrders(orderExecutor, session)
 		}
 	})
+
+	//session.MarketDataStream.OnKLineClosed(types.KLineWith(s.Symbol, s.Interval, func(kline types.KLine) {
+	//	// handle your kline here
+	//	if s.RepostInterval != "" {
+	//		// see if we have enough balances and then we create limit orders on the up band and the down band.
+	//		if s.RepostInterval == kline.Interval {
+	//			s.updateOrders(orderExecutor, session)
+	//		}
+	//
+	//	} else if s.Interval == kline.Interval {
+	//		s.updateOrders(orderExecutor, session)
+	//	}
+	//}))
 
 	return nil
 }
